@@ -1,6 +1,6 @@
 {
   "name": "@se-oss/base64",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Robust Base64 encoding/decoding for TypeScript, with URL-safe, Uint8Array, and streaming capabilities.",
   "keywords": [
     "base64",
