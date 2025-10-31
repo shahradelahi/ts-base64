@@ -119,10 +119,10 @@ export function encodeURL(value: NotBase64, options: Base64EncodeOptions = {}): 
  * console.log(encoded); // 'SGVsbG8sIHdvcmxkIQ=='
  * ```
  */
-export function fromUint8Array(
-  value: Uint8Array,
-  options: Base64EncodeOptions = {}
-): Base64String | Base64UrlString {
+export function fromUint8Array<
+  SafeURL extends boolean,
+  Result = SafeURL extends true ? Base64UrlString : Base64String,
+>(value: Uint8Array, options: Base64EncodeOptions<SafeURL> = {}): Result {
   if (typeof value !== 'object' || value.constructor.name !== 'Uint8Array') {
     throw new TypeError('The value to convert must be a Uint8Array.');
   }
@@ -174,7 +174,7 @@ export function fromUint8Array(
     result = result.replace(/=/g, '');
   }
 
-  return result as Base64String | Base64UrlString;
+  return result as Result;
 }
 
 /**
