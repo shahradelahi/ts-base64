@@ -72,10 +72,7 @@ const textDecoder = new TextDecoder();
  * console.log(decoded); // 'Hello, world!'
  * ```
  */
-export function decode(
-  value: Base64String | Base64UrlString,
-  options: Base64DecodeOptions = {}
-): NotBase64 {
+export function decode(value: MaybeBase64, options: Base64DecodeOptions = {}): NotBase64 {
   if (typeof value !== 'string') {
     throw new InvalidBase64Error('The value to decode must be a string.');
   }
@@ -165,10 +162,11 @@ export function decodeURL(value: Base64UrlString): NotBase64 {
  * console.log(uint8); // Uint8Array(13) [ 72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33 ]
  * ```
  */
-export function toUint8Array(
-  value: Base64String | Base64UrlString,
-  options: Base64DecodeOptions = {}
-): Uint8Array {
+export function toUint8Array(value: MaybeBase64, options: Base64DecodeOptions = {}): Uint8Array {
+  if (typeof value !== 'string') {
+    throw new InvalidBase64Error('The value to decode must be a string.');
+  }
+
   let base64: string = value;
   if (options.urlSafe) {
     base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
