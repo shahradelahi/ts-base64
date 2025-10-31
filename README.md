@@ -6,7 +6,7 @@
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/@se-oss/base64)
 [![Install Size](https://packagephobia.com/badge?p=@se-oss/base64)](https://packagephobia.com/result?p=@se-oss/base64)
 
-`@se-oss/base64` is a library for Base64 for TypeScript, and it provides a comprehensive set of tools for Base64 encoding and decoding, with support for URL-safe encoding, Uint8Array conversion, and a class-based API.
+_@se-oss/base64_ is a library for Base64 for TypeScript, and it provides a comprehensive set of tools for Base64 encoding and decoding, with support for URL-safe encoding, Uint8Array conversion, and a class-based API.
 
 ---
 

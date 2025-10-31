@@ -1,8 +1,18 @@
 {
   "name": "@se-oss/base64",
   "version": "0.0.0",
-  "description": "",
-  "keywords": [],
+  "description": "Robust Base64 encoding/decoding for TypeScript, with URL-safe, Uint8Array, and streaming capabilities.",
+  "keywords": [
+    "base64",
+    "encoding",
+    "decoding",
+    "typescript",
+    "url-safe",
+    "uint8array",
+    "stream",
+    "binary",
+    "data-url"
+  ],
   "homepage": "https://github.com/shahradelahi/ts-base64",
   "repository": "github:shahradelahi/ts-base64",
   "license": "MIT",
@@ -27,7 +37,7 @@
   ],
   "scripts": {
     "bench": "vitest bench --run",
-    "build": "pnpm typecheck && tsup",
+    "build": "tsup",
     "clean": "git clean -dfx node_modules dist .tsbuildinfo",
     "dev": "tsup --watch",
     "format": "prettier --write .",
