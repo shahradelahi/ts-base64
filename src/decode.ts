@@ -55,8 +55,6 @@ export function isValidURL(value: MaybeBase64): value is Base64UrlString {
   return B64_URL_REGEX.test(value);
 }
 
-const textDecoder = new TextDecoder();
-
 /**
  * Decodes a Base64 encoded string.
  *
@@ -92,43 +90,20 @@ export function decode(value: MaybeBase64, options: Base64DecodeOptions = {}): N
   }
 
   // Browser environment
-  if (typeof TextDecoder !== 'undefined' && typeof atob !== 'undefined') {
+  else if (typeof TextDecoder !== 'undefined' && typeof atob !== 'undefined') {
     const binaryString = atob(base64);
     const uint8Array = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       uint8Array[i] = binaryString.charCodeAt(i);
     }
-    return textDecoder.decode(uint8Array);
+    return new TextDecoder().decode(uint8Array);
   }
 
   // Fallback for other environments
-  const lookup = B64_LOOKUP;
-  let result = '';
-  let i = 0;
-
-  const sanitizedValue = base64.replace(/[^A-Za-z0-9+/=]/g, '');
-
-  while (i < sanitizedValue.length) {
-    const enc1 = lookup[sanitizedValue.charAt(i++)];
-    const enc2 = lookup[sanitizedValue.charAt(i++)];
-    const enc3 = lookup[sanitizedValue.charAt(i++)];
-    const enc4 = lookup[sanitizedValue.charAt(i++)];
-
-    const chr1 = (enc1 << 2) | (enc2 >> 4);
-    const chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-    const chr3 = ((enc3 & 3) << 6) | enc4;
-
-    result += String.fromCharCode(chr1);
-
-    if (enc3 !== 64) {
-      result += String.fromCharCode(chr2);
-    }
-    if (enc4 !== 64) {
-      result += String.fromCharCode(chr3);
-    }
+  else {
+    const uint8Array = toUint8Array(base64, { urlSafe: options.urlSafe });
+    return new TextDecoder().decode(uint8Array);
   }
-
-  return result;
 }
 
 /**
@@ -192,7 +167,7 @@ export function toUint8Array(value: MaybeBase64, options: Base64DecodeOptions = 
   }
 
   const lookup = B64_LOOKUP;
-  const bytes = new Uint8Array(((base64.length * 3) / 4) | 0);
+  const bytes = new Uint8Array((base64.length * 3) / 4); // Allocate maximum possible size
   let i = 0;
   let j = 0;
 
