@@ -1,8 +1,6 @@
 import { B64_CHAR_SET } from './constants';
 import type { Base64EncodeOptions, Base64String, Base64UrlString, NotBase64 } from './typings';
 
-const textEncoder = new TextEncoder();
-
 /**
  * Encodes a string into a Base64 encoded string.
  *
@@ -34,43 +32,21 @@ export function encode<
   }
   // Browser environment
   else if (typeof TextEncoder !== 'undefined' && typeof btoa !== 'undefined') {
-    const uint8Array = textEncoder.encode(value);
+    const uint8Array = new TextEncoder().encode(value);
 
     let binaryString = '';
-    const chunkSize = 4096;
-    for (let i = 0; i < uint8Array.length; i += chunkSize) {
-      binaryString += String.fromCharCode.apply(
-        null,
-        Array.from(uint8Array.subarray(i, i + chunkSize))
-      );
+    for (let i = 0; i < uint8Array.length; i++) {
+      binaryString += String.fromCharCode(uint8Array[i]);
     }
     result = btoa(binaryString);
   }
   // Fallback for other environments
   else {
-    let res = '';
-    const chars = B64_CHAR_SET;
-    let i = 0;
-
-    while (i < value.length) {
-      const char1 = value.charCodeAt(i++);
-      const char2 = value.charCodeAt(i++);
-      const char3 = value.charCodeAt(i++);
-
-      const b1 = char1 >> 2;
-      const b2 = ((char1 & 3) << 4) | (char2 >> 4);
-      let b3 = ((char2 & 15) << 2) | (char3 >> 6);
-      let b4 = char3 & 63;
-
-      if (isNaN(char2)) {
-        b3 = b4 = 64;
-      } else if (isNaN(char3)) {
-        b4 = 64;
-      }
-
-      res += chars.charAt(b1) + chars.charAt(b2) + chars.charAt(b3) + chars.charAt(b4);
-    }
-    result = res;
+    const utf8Bytes = new TextEncoder().encode(value);
+    result = fromUint8Array(utf8Bytes, {
+      omitPadding: options.omitPadding,
+      urlSafe: options.urlSafe,
+    });
   }
 
   if (options.urlSafe) {
@@ -129,9 +105,11 @@ export function fromUint8Array<
 
   let result: string;
 
+  // Node.js environment
   if (typeof Buffer !== 'undefined') {
     result = Buffer.from(value).toString('base64');
   }
+
   // Browser environment
   else if (typeof btoa !== 'undefined') {
     let binaryString = '';
@@ -141,27 +119,27 @@ export function fromUint8Array<
     }
     result = btoa(binaryString);
   }
+
   // Fallback
   else {
     let res = '';
     const chars = B64_CHAR_SET;
-    for (let i = 0; i < value.length; i += 3) {
-      const byte1 = value[i];
-      const byte2 = value[i + 1];
-      const byte3 = value[i + 2];
+    let i = 0;
+    const len = value.length;
 
-      const b1 = byte1 >> 2;
-      const b2 = ((byte1 & 3) << 4) | (byte2 >> 4);
-      let b3 = ((byte2 & 15) << 2) | (byte3 >> 6);
-      let b4 = byte3 & 63;
+    while (i < len) {
+      const remainingBytes = len - i;
 
-      if (isNaN(byte2)) {
-        b3 = b4 = 64;
-      } else if (isNaN(byte3)) {
-        b4 = 64;
-      }
+      const chr1 = value[i++];
+      const chr2 = i < len ? value[i++] : 0;
+      const chr3 = i < len ? value[i++] : 0;
 
-      res += chars.charAt(b1) + chars.charAt(b2) + chars.charAt(b3) + chars.charAt(b4);
+      const enc1 = chr1 >> 2;
+      const enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+      const enc3 = remainingBytes > 1 ? ((chr2 & 15) << 2) | (chr3 >> 6) : 64;
+      const enc4 = remainingBytes > 2 ? chr3 & 63 : 64;
+
+      res += chars.charAt(enc1) + chars.charAt(enc2) + chars.charAt(enc3) + chars.charAt(enc4);
     }
     result = res;
   }
