@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    if: github.repository == 'shahradelahi/ts-md5'
+    if: github.repository == 'shahradelahi/ts-base64'
     name: Build & Publish Release
     runs-on: ubuntu-latest
     permissions:
