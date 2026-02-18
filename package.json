@@ -38,6 +38,7 @@
   "scripts": {
     "bench": "vitest bench --run",
     "build": "tsup",
+    "ci:publish": "changeset publish",
     "clean": "git clean -dfx node_modules dist .tsbuildinfo",
     "dev": "tsup --watch",
     "format": "prettier --write .",
@@ -50,6 +51,7 @@
   },
   "prettier": "@shahrad/prettier-config",
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@shahrad/eslint-config": "^1.0.1",
     "@shahrad/prettier-config": "^1.2.2",
     "@shahrad/tsconfig": "^1.2.0",
@@ -62,5 +64,9 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.5"
   },
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd"
+  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }
