@@ -1,4 +1,5 @@
 import { B64_CHAR_SET } from './constants';
+import { HAS_BTOA, IS_NODE, TEXT_ENCODER } from './env';
 import type { Base64EncodeOptions, Base64String, Base64UrlString, NotBase64 } from './typings';
 
 /**
@@ -27,22 +28,26 @@ export function encode<
   let result: string;
 
   // Node.js environment
-  if (typeof Buffer !== 'undefined') {
+  if (IS_NODE) {
     result = Buffer.from(value, 'utf-8').toString('base64');
   }
   // Browser environment
-  else if (typeof TextEncoder !== 'undefined' && typeof btoa !== 'undefined') {
-    const uint8Array = new TextEncoder().encode(value);
+  else if (HAS_BTOA) {
+    const uint8Array = TEXT_ENCODER.encode(value);
 
     let binaryString = '';
-    for (let i = 0; i < uint8Array.length; i++) {
-      binaryString += String.fromCharCode(uint8Array[i]);
+    const chunkSize = 4096;
+    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+      binaryString += String.fromCharCode.apply(
+        null,
+        Array.from(uint8Array.subarray(i, i + chunkSize))
+      );
     }
     result = btoa(binaryString);
   }
   // Fallback for other environments
   else {
-    const utf8Bytes = new TextEncoder().encode(value);
+    const utf8Bytes = TEXT_ENCODER.encode(value);
     result = fromUint8Array(utf8Bytes, {
       omitPadding: options.omitPadding,
       urlSafe: options.urlSafe,
@@ -106,12 +111,12 @@ export function fromUint8Array<
   let result: string;
 
   // Node.js environment
-  if (typeof Buffer !== 'undefined') {
+  if (IS_NODE) {
     result = Buffer.from(value).toString('base64');
   }
 
   // Browser environment
-  else if (typeof btoa !== 'undefined') {
+  else if (HAS_BTOA) {
     let binaryString = '';
     const chunkSize = 4096;
     for (let i = 0; i < value.length; i += chunkSize) {

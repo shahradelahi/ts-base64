@@ -1,5 +1,6 @@
 import { decode } from './decode';
 import { fromUint8Array } from './encode';
+import { TEXT_ENCODER } from './env';
 import type { Base64String, TransformStream } from './typings';
 
 /**
@@ -46,7 +47,7 @@ export class Base64EncodeStream implements TransformStream<string | Uint8Array, 
         chunk: string | Uint8Array,
         controller: TransformStreamDefaultController<Base64String>
       ) => {
-        const chunkBuffer = typeof chunk === 'string' ? new TextEncoder().encode(chunk) : chunk;
+        const chunkBuffer = typeof chunk === 'string' ? TEXT_ENCODER.encode(chunk) : chunk;
 
         const combinedBuffer = new Uint8Array(this.buffer.length + chunkBuffer.length);
         combinedBuffer.set(this.buffer);

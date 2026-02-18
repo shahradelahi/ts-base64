@@ -1,4 +1,5 @@
 import { B64_LOOKUP, B64_REGEX, B64_URL_REGEX } from './constants';
+import { HAS_ATOB, IS_NODE, TEXT_DECODER } from './env';
 import { InvalidBase64Error, InvalidDataURLError } from './errors';
 import type {
   Base64DecodeOptions,
@@ -85,24 +86,24 @@ export function decode(value: MaybeBase64, options: Base64DecodeOptions = {}): N
   }
 
   // Node.js environment
-  if (typeof Buffer !== 'undefined') {
+  if (IS_NODE) {
     return Buffer.from(base64, 'base64').toString('utf-8');
   }
 
   // Browser environment
-  else if (typeof TextDecoder !== 'undefined' && typeof atob !== 'undefined') {
+  else if (HAS_ATOB) {
     const binaryString = atob(base64);
     const uint8Array = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       uint8Array[i] = binaryString.charCodeAt(i);
     }
-    return new TextDecoder().decode(uint8Array);
+    return TEXT_DECODER.decode(uint8Array);
   }
 
   // Fallback for other environments
   else {
     const uint8Array = toUint8Array(base64, { urlSafe: options.urlSafe });
-    return new TextDecoder().decode(uint8Array);
+    return TEXT_DECODER.decode(uint8Array);
   }
 }
 
@@ -148,12 +149,12 @@ export function toUint8Array(value: MaybeBase64, options: Base64DecodeOptions = 
   }
 
   // Node.js environment
-  if (typeof Buffer !== 'undefined') {
+  if (IS_NODE) {
     return new Uint8Array(Buffer.from(base64, 'base64'));
   }
 
   // Browser environment
-  if (typeof TextDecoder !== 'undefined' && typeof atob !== 'undefined') {
+  if (HAS_ATOB) {
     const binaryString = atob(base64);
     const uint8Array = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
