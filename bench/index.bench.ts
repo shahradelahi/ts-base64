@@ -1,8 +1,13 @@
+import {
+  decode,
+  encode,
+  fromDataURL,
+  fromUint8Array,
+  toDataURL,
+  toUint8Array,
+} from '@se-oss/base64';
 import { Base64 as jsBase64 } from 'js-base64';
 import { bench, describe } from 'vitest';
-
-import { decode, fromDataURL, toUint8Array } from './decode';
-import { encode, fromUint8Array, toDataURL } from './encode';
 
 const smallString = 'Hello, world!';
 const mediumString = 'a'.repeat(1024);

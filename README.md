@@ -196,7 +196,7 @@ The benchmarks are run against the native `btoa`/`atob` functions and the popula
 | `toDataURL`      | **1,580.90**             | -                   | -                |
 | `fromDataURL`    | **899.29**               | -                   | -                |
 
-_Benchmark script: [`src/index.bench.ts`](src/index.bench.ts)_
+_Benchmark script: [`bench/index.bench.ts`](bench/index.bench.ts)_
 
 ## 🤝 Contributing
 
