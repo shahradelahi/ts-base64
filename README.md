@@ -1,25 +1,21 @@
-# @se-oss/base64
+<h1 align="center">
+  <sup>@se-oss/base64</sup>
+  <br>
+  <a href="https://github.com/shahradelahi/ts-base64/actions/workflows/ci.yml"><img src="https://github.com/shahradelahi/ts-base64/actions/workflows/ci.yml/badge.svg?branch=main&event=push" alt="CI"></a>
+  <a href="https://www.npmjs.com/package/@se-oss/base64"><img src="https://img.shields.io/npm/v/@se-oss/base64.svg" alt="NPM Version"></a>
+  <a href="/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat" alt="MIT License"></a>
+  <a href="https://bundlephobia.com/package/@se-oss/base64"><img src="https://img.shields.io/bundlephobia/minzip/@se-oss/base64" alt="npm bundle size"></a>
+  <a href="https://packagephobia.com/result?p=@se-oss/base64"><img src="https://packagephobia.com/badge?p=@se-oss/base64" alt="Install Size"></a>
+</h1>
 
-[![CI](https://github.com/shahradelahi/ts-base64/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/shahradelahi/ts-base64/actions/workflows/ci.yml)
-[![NPM Version](https://img.shields.io/npm/v/@se-oss/base64.svg)](https://www.npmjs.com/package/@se-oss/base64)
-[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat)](/LICENSE)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/@se-oss/base64)
-[![Install Size](https://packagephobia.com/badge?p=@se-oss/base64)](https://packagephobia.com/result?p=@se-oss/base64)
-
-_@se-oss/base64_ is a library for Base64 for TypeScript, and it provides a comprehensive set of tools for Base64 encoding and decoding, with support for URL-safe encoding, Uint8Array conversion, and a class-based API.
+_@se-oss/base64_ is a robust and high-performance Base64 library for TypeScript, providing a comprehensive set of tools for encoding and decoding with support for URL-safe strings, Uint8Array conversion, and a class-based API.
 
 ---
 
 - [Installation](#-installation)
 - [Usage](#-usage)
-  - [Functions](#functions)
-  - [Class](#class)
-  - [Streaming API](#streaming-api)
-  - [Prototype Extensions](#prototype-extensions)
-- [Advanced Configuration](#advanced-configuration)
-  - [Omitting Padding](#omitting-padding)
-- [Error Handling](#error-handling)
 - [Performance](#-performance)
+- [Documentation](#-documentation)
 - [Contributing](#-contributing)
 - [License](#license)
 
@@ -48,140 +44,101 @@ yarn add @se-oss/base64
 
 ## 📖 Usage
 
-You can use the library as a collection of functions or as a class.
+### Basic Usage
 
-### Functions
+Simple encoding and decoding of UTF-8 strings.
 
-```typescript
-import {
-  decode,
-  decodeURL,
-  encode,
-  encodeURL,
-  fromUint8Array,
-  isValid,
-  toUint8Array,
-} from '@se-oss/base64';
+```ts
+import { decode, encode } from '@se-oss/base64';
 
-const text = 'Hello, world!';
-
-// Encode and decode
-const encoded = encode(text); // 'SGVsbG8sIHdvcmxkIQ=='
+const encoded = encode('Hello, world!'); // 'SGVsbG8sIHdvcmxkIQ=='
 const decoded = decode(encoded); // 'Hello, world!'
-
-// URL-safe encode and decode
-const urlSafeEncoded = encodeURL(text); // 'SGVsbG8sIHdvcmxkIQ'
-const urlSafeDecoded = decodeURL(urlSafeEncoded); // 'Hello, world!'
-
-// Check for valid Base64
-isValid(encoded); // true
-isValid('not base64'); // false
-
-// Work with Uint8Arrays
-const uint8Array = new Uint8Array([
-  72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33,
-]);
-const encodedFromUint8Array = fromUint8Array(uint8Array); // 'SGVsbG8sIHdvcmxkIQ=='
-const decodedToUint8Array = toUint8Array(encodedFromUint8Array); // Uint8Array([72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33])
 ```
 
-### Class
+### URL-Safe Encoding
 
-```typescript
-import { Base64 } from '@se-oss/base64';
+Easily handle Base64 for URLs by using the URL-safe alphabet.
 
-const text = 'Hello, world!';
+```ts
+import { decodeURL, encodeURL } from '@se-oss/base64';
 
-// Encode and decode
-const encoded = Base64.encode(text); // 'SGVsbG8sIHdvcmxkIQ=='
-const decoded = Base64.decode(encoded); // 'Hello, world!'
+const encoded = encodeURL('a+b/c='); // 'YStiL2M9'
+const decoded = decodeURL(encoded);
+```
 
-// URL-safe encode and decode
-const urlSafeEncoded = Base64.encodeURL(text); // 'SGVsbG8sIHdvcmxkIQ'
-const urlSafeDecoded = Base64.decodeURL(urlSafeEncoded); // 'Hello, world!'
+### Uint8Array Support
 
-// Check for valid Base64
-Base64.isValid(encoded); // true
-Base64.isValid('not base64'); // false
+Native support for `Uint8Array` conversion without intermediate string overhead where possible.
 
-// Work with Uint8Arrays
-const uint8Array = new Uint8Array([
-  72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33,
-]);
-const encodedFromUint8Array = Base64.fromUint8Array(uint8Array); // 'SGVsbG8sIHdvcmxkIQ=='
-const decodedToUint8Array = Base64.toUint8Array(encodedFromUint8Array); // Uint8Array([72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33])
+```ts
+import { fromUint8Array, toUint8Array } from '@se-oss/base64';
+
+const bytes = new Uint8Array([72, 101, 108, 108, 111]);
+const encoded = fromUint8Array(bytes);
+const decoded = toUint8Array(encoded);
 ```
 
 ### Streaming API
 
-The library provides a streaming API for encoding and decoding large data without high memory consumption.
+Handle large datasets efficiently using Web `TransformStream` to encode or decode data in chunks.
 
-```typescript
-import { Base64DecodeStream, Base64EncodeStream } from '@se-oss/base64';
+```ts
+import { Base64EncodeStream } from '@se-oss/base64';
 
 const stream = new ReadableStream({
   start(controller) {
     controller.enqueue('Hello');
-    controller.enqueue(', ');
-    controller.enqueue('world!');
+    controller.enqueue(' World');
     controller.close();
   },
 });
 
-const encodeStream = new Base64EncodeStream();
-const encodedStream = stream.pipeThrough(encodeStream);
-
-const reader = encodedStream.getReader();
-let result = '';
-let done = false;
-
-while (!done) {
-  const { value, done: d } = await reader.read();
-  done = d;
-  if (value) {
-    result += value;
-  }
-}
-
-console.log(result); // 'SGVsbG8sIHdvcmxkIQ=='
+const encodedStream = stream.pipeThrough(new Base64EncodeStream());
 ```
 
 ### Prototype Extensions
 
-You can opt-in to prototype extensions to add `toBase64`, `fromBase64`, and `toUint8Array` methods to `String.prototype` and `Uint8Array.prototype`.
+Opt-in to extend native prototypes for a more fluent and convenient API.
 
-```typescript
+```ts
 import '@se-oss/base64/extend';
 
-const text = 'Hello, world!';
-const encodedText = 'SGVsbG8sIHdvcmxkIQ==';
-
-// String extensions
-text.toBase64(); // 'SGVsbG8sIHdvcmxkIQ=='
-encodedText.fromBase64(); // 'Hello, world!'
-encodedText.toUint8Array(); // Uint8Array([72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33])
-
-// Uint8Array extension
-const uint8Array = new Uint8Array([
-  72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33,
-]);
-uint8Array.toBase64(); // 'SGVsbG8sIHdvcmxkIQ=='
+'Hello'.toBase64();
+'SGVsbG8='.fromBase64();
+new Uint8Array([72, 101]).toBase64();
 ```
 
-## Advanced Configuration
+### Validation
 
-### Omitting Padding
+Verify if a string is a valid Base64 or URL-safe Base64 encoded string.
 
-You can omit the padding characters (`=`) from the encoded string by passing an options object to the `encode` function.
+```ts
+import { isValid, isValidURL } from '@se-oss/base64';
 
-```typescript
+isValid('SGVsbG8='); // true
+isValidURL('YStiL2M'); // true
+```
+
+### Data URL
+
+Helper functions for generating and parsing Data URLs.
+
+```ts
+import { fromDataURL, toDataURL } from '@se-oss/base64';
+
+const dataUrl = toDataURL('Hello', 'text/plain');
+const { data, mimeType } = fromDataURL(dataUrl);
+```
+
+### Advanced Options
+
+Omit padding characters for cleaner strings or specify URL-safety in generic functions.
+
+```ts
 import { encode } from '@se-oss/base64';
 
-const text = 'Hello, world';
-const encoded = encode(text, { omitPadding: true }); // 'SGVsbG8sIHdvcmxk'
+const unpadded = encode('Hello', { omitPadding: true }); // 'SGVsbG8'
 ```
-
-The `decode` function can handle both padded and unpadded strings.
 
 ## 🚀 Performance
 
@@ -189,18 +146,22 @@ The benchmarks are run against the native `btoa`/`atob` functions and the popula
 
 | Function         | @se-oss/base64 (ops/sec) | js-base64 (ops/sec) | Native (ops/sec) |
 | :--------------- | :----------------------- | :------------------ | :--------------- |
-| `encode`         | 1,567.04                 | 1,547.28            | **1,985.42**     |
-| `decode`         | 2,303.86                 | 656.18              | **2,965.57**     |
-| `fromUint8Array` | **3,741.40**             | 3,476.93            | -                |
-| `toUint8Array`   | **3,941.51**             | 763.89              | -                |
-| `toDataURL`      | **1,580.90**             | -                   | -                |
-| `fromDataURL`    | **899.29**               | -                   | -                |
+| `encode`         | **3,920.79**             | 3,521.89            | 2,139.68         |
+| `decode`         | **3,267.53**             | 761.08              | 3,169.99         |
+| `fromUint8Array` | 3,577.44                 | **3,821.32**        | -                |
+| `toUint8Array`   | **3,961.72**             | 762.16              | -                |
+| `toDataURL`      | **3,558.89**             | -                   | -                |
+| `fromDataURL`    | **1,218.19**             | -                   | -                |
 
 _Benchmark script: [`bench/index.bench.ts`](bench/index.bench.ts)_
 
+## 📚 Documentation
+
+For all configuration options, please see [the API docs](https://www.jsdocs.io/package/@se-oss/base64).
+
 ## 🤝 Contributing
 
-Want to contribute? Awesome! To show your support is to star the project, or to raise issues on [GitHub](https://github.com/shahradelahi/ts-base64)
+Want to contribute? Awesome! To show your support is to star the project, or to raise issues on [GitHub](https://github.com/shahradelahi/ts-base64).
 
 Thanks again for your support, it is much appreciated! 🙏
 
